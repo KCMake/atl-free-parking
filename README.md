@@ -7,6 +7,8 @@ A map of free street parking around Midtown Atlanta, Georgia Tech, Home Park, At
 and the Westside. Pick a day, a time and where you're headed, and it shows which curbs are free
 right then and the closest ones, with walking times.
 
+**[Open the map →](https://kcmake.github.io/atl-free-parking/)**
+
 ![The map on a Tuesday at 2 PM, with the six nearest free blocks to Tech Square numbered](docs/screenshot.png)
 
 Atlanta doesn't publish where its parking meters are, so free parking can't be looked up; it has
@@ -119,7 +121,8 @@ make data     # re-download the raw inputs (the committed snapshot is enough to 
 - `tests/hours.test.js` covers the meter clock: holidays (dates checked against Python's calendar),
   the 7 AM and 10 PM edges, per-block end hours, and daylight saving time.
 - On every push, CI lints the code, rebuilds the map and checks that the committed
-  `parking.geojson` matches a fresh build. It then runs both suites on Python 3.9 and 3.13.
+  `parking.geojson` matches a fresh build. It then runs both suites on Python 3.9 and 3.13. Pushes
+  to `main` that pass deploy the map to GitHub Pages.
 
 ## Add a block you've checked
 
