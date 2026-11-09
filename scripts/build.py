@@ -495,6 +495,35 @@ def build() -> dict:
     }
 
 
+DESCRIPTION = ("Free street parking around Midtown Atlanta, Georgia Tech, Home Park and the Westside, "
+               "by day and hour, with the evidence behind every block.")
+# The green "P" sign, inline so browsers don't request /favicon.ico.
+FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+           "%3Crect x='1' y='1' width='30' height='30' rx='6' fill='%2312804A'/%3E"
+           "%3Ctext x='16' y='23.5' font-family='Arial,Helvetica,sans-serif' font-weight='700' "
+           "font-size='21' text-anchor='middle' fill='%23fff'%3EP%3C/text%3E%3C/svg%3E")
+
+
+def full_document(fragment: str) -> str:
+    """Wrap the page fragment in a standalone document, moving its <title> into
+    <head> next to the description, link-preview tags and favicon."""
+    m = re.search(r"<title>(.*?)</title>\n?", fragment)
+    title = m.group(1) if m else "Free Curb ATL"
+    body = fragment.replace(m.group(0), "", 1) if m else fragment
+    head = (
+        '<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+        f"<title>{title}</title>\n"
+        f'<meta name="description" content="{DESCRIPTION}">\n'
+        f'<meta property="og:title" content="{title}">\n'
+        f'<meta property="og:description" content="{DESCRIPTION}">\n'
+        '<meta property="og:type" content="website">\n'
+        f'<link rel="icon" href="{FAVICON}">\n'
+        "<style>body{margin:0}[hidden]{display:none!important}</style>\n"
+    )
+    return f'<!doctype html>\n<html lang="en">\n<head>\n{head}</head>\n<body>\n{body}\n</body>\n</html>\n'
+
+
 def write_outputs(result: dict) -> None:
     """Write data/parking.geojson and, when the web template is present, the map page."""
     src = result["src"]
@@ -517,13 +546,9 @@ def write_outputs(result: dict) -> None:
     html = html.replace("/*__HOURS_JS__*/", (WEB / "hours.js").read_text())
     html = html.replace("/*__DATA__*/null", json.dumps(bundle, separators=(",", ":")))
     # artifact.html: page fragment (claude.ai wraps it in a document at publish).
-    # index.html: the same page as a full document, for self-hosting.
+    # index.html: the same page as a full document, for self-hosting and GitHub Pages.
     (OUT_HTML.parent / "artifact.html").write_text(html)
-    OUT_HTML.write_text(
-        '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
-        "<style>body{margin:0}[hidden]{display:none!important}</style>\n</head>\n<body>\n"
-        + html + "\n</body>\n</html>\n")
+    OUT_HTML.write_text(full_document(html))
     print(f"wrote {OUT_HTML.relative_to(ROOT)} + artifact.html  ({OUT_HTML.stat().st_size / 1024:.0f} KB)")
 
 

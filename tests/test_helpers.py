@@ -58,6 +58,18 @@ class GeometryTest(unittest.TestCase):
         self.assertTrue(build.in_geom(build.label_point(geom), geom))
 
 
+class FullDocumentTest(unittest.TestCase):
+    def test_title_moves_into_head(self):
+        doc = build.full_document("<title>Free Curb ATL</title>\n<div id=map></div>")
+        head, body = doc.split("<body>")
+        self.assertTrue(doc.startswith("<!doctype html>"))
+        self.assertEqual(doc.count("<title>"), 1)
+        self.assertIn("<title>Free Curb ATL</title>", head)
+        self.assertIn('<meta name="description"', head)
+        self.assertIn('<link rel="icon"', head)
+        self.assertIn("<div id=map></div>", body)
+
+
 class OsmVerdictTest(unittest.TestCase):
     def test_no_parking_on_both_sides(self):
         self.assertEqual(build.osm_verdict({"parking:both": "no"}), "none")
