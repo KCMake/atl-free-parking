@@ -1,0 +1,16 @@
+[project]
+name = "atl-free-parking"
+version = "0.2.0"
+description = "Map of free street parking in Midtown Atlanta and around Georgia Tech"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Kenney Chen" }]
+dependencies = []  # standard library only
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP"]

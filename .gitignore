@@ -1,0 +1,13 @@
+# Build output: `make build` regenerates it
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
