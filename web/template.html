@@ -1,0 +1,776 @@
+<title>Free Curb ATL</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Overpass+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: full-height split. A street-sign control panel on the left, the live curb map on the right; on phones the map stacks over the panel. */
+:root {
+  --paper: #F3F4EF;
+  --card: #FFFFFF;
+  --asphalt: #E3E5DF;
+  --ink: #15191C;
+  --muted: #59615F;
+  --rule: #D2D6CE;
+  --street: #BBC0B8;
+  --park: #CBE0C1;
+  --hood: #7F877F;
+  --focus: #1A4F94;
+  --halo: #15191C;
+  --c-free: #12804A;
+  --c-limited: #0A7A8A;
+  --c-check: #B97800;
+  --c-paid: #C0232E;
+  --c-campus: #2A5BCF;
+  --c-none: #A6ACA4;
+  --font-display: "Overpass", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Overpass", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "Overpass Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #101315; --card: #191D20; --asphalt: #181C1F; --ink: #ECEFEA; --muted: #9BA29C;
+    --rule: #2A3034; --street: #3A4146; --park: #1C3022; --hood: #737B75; --focus: #8DB4FF; --halo: #ECEFEA;
+    --c-free: #3CCB7C; --c-limited: #3FC9D8; --c-check: #F1B23C; --c-paid: #FF6670; --c-campus: #7AA2FF; --c-none: #4B5358;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #101315; --card: #191D20; --asphalt: #181C1F; --ink: #ECEFEA; --muted: #9BA29C;
+  --rule: #2A3034; --street: #3A4146; --park: #1C3022; --hood: #737B75; --focus: #8DB4FF; --halo: #ECEFEA;
+  --c-free: #3CCB7C; --c-limited: #3FC9D8; --c-check: #F1B23C; --c-paid: #FF6670; --c-campus: #7AA2FF; --c-none: #4B5358;
+  color-scheme: dark;
+}
+
+/*__LEAFLET_CSS__*/
+
+html, body { height: 100%; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+* { box-sizing: border-box; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+a { color: var(--focus); }
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(320px, 400px) 1fr;
+  height: 100%;
+}
+.panel {
+  overflow-y: auto;
+  border-right: 1px solid var(--rule);
+  padding-block: 20px 28px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+.mapwrap { position: relative; min-width: 0; }
+#map { position: absolute; inset: 0; background: var(--asphalt); }
+
+/* brand: a permissive parking sign */
+.brand { display: flex; gap: 14px; align-items: center; }
+.sign {
+  flex: none;
+  width: 54px; height: 66px;
+  border: 3px solid var(--c-free);
+  border-radius: 6px;
+  background: var(--card);
+  display: grid; place-items: center;
+  align-content: center;
+  color: var(--c-free);
+  line-height: 1;
+}
+.sign b { font-family: var(--font-display); font-weight: 800; font-size: 34px; }
+.sign small { font-family: var(--font-display); font-weight: 800; font-size: 10px; letter-spacing: .12em; margin-top: 2px; }
+h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+.sub { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
+}
+h2 {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 800;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* when */
+.when { display: flex; flex-direction: column; gap: 8px; }
+.when-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.when-inputs { display: flex; gap: 8px; flex-wrap: wrap; }
+.when-inputs input {
+  flex: 1 1 130px; min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--card);
+  font-family: var(--font-data); font-size: 14px;
+}
+.btn {
+  border: 1px solid var(--rule); background: var(--card);
+  border-radius: 999px; padding: 4px 12px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.meter-state {
+  margin: 0;
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 14px;
+}
+.meter-dot {
+  flex: none; width: 10px; height: 10px; border-radius: 50%;
+  margin-top: 5px; background: var(--c-paid);
+}
+.meter-state.off .meter-dot { background: var(--c-free); }
+.summary { margin: 0; font-size: 14px; color: var(--muted); }
+.summary strong { color: var(--ink); font-family: var(--font-data); font-weight: 600; }
+
+/* legend: painted curb chips */
+.legend { display: flex; flex-direction: column; gap: 2px; }
+.legend-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.leg {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 10px; align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 7px 8px;
+  border: 0; border-radius: 6px;
+  background: transparent; cursor: pointer;
+}
+.leg:hover { background: var(--card); }
+.leg[aria-pressed="false"] { opacity: .42; }
+.leg[aria-pressed="false"] .curb { background: var(--street) !important; }
+.curb { height: 7px; border-radius: 4px; }
+.curb.dashed { background: repeating-linear-gradient(90deg, var(--c-free) 0 7px, transparent 7px 11px) !important; }
+.leg-label { font-weight: 600; font-size: 14px; line-height: 1.2; }
+.leg-label small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.leg-km { font-family: var(--font-data); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* destination */
+.dest { display: flex; flex-direction: column; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  border: 1px solid var(--rule); background: var(--card);
+  border-radius: 999px; padding: 5px 11px;
+  font-size: 13px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { border-color: var(--focus); color: var(--focus); font-weight: 600; }
+.hint { margin: 0; font-size: 13px; color: var(--muted); }
+.opt { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+.results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.res {
+  display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center;
+  width: 100%; text-align: left;
+  padding: 9px 10px;
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--card); cursor: pointer;
+}
+.res:hover { border-color: var(--focus); }
+.num {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--ink); color: var(--paper);
+  font-family: var(--font-data); font-size: 12px; font-weight: 600;
+}
+.res-name { font-weight: 600; font-size: 14px; line-height: 1.2; min-width: 0; }
+.res-name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.res-walk { font-family: var(--font-data); font-size: 13px; white-space: nowrap; text-align: right; }
+.res-walk small { display: block; color: var(--muted); font-size: 11px; }
+.empty { font-size: 13px; color: var(--muted); margin: 0; }
+
+.pill {
+  display: inline-block;
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--paper);
+}
+
+.fine { font-size: 12px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.fine p { margin: 0; }
+
+/* map furniture */
+.leaflet-container { font-family: var(--font-body); background: var(--asphalt); }
+.leaflet-control-zoom a, .leaflet-bar a { background: var(--card); color: var(--ink); border-color: var(--rule); }
+.leaflet-bar { border-color: var(--rule) !important; }
+.leaflet-control-attribution { background: color-mix(in srgb, var(--paper) 85%, transparent) !important; color: var(--muted); font-size: 10px; }
+.leaflet-control-attribution a { color: var(--muted); }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--card); color: var(--ink); box-shadow: 0 6px 24px rgb(0 0 0 / .18); }
+.leaflet-popup-content { margin: 14px 16px; font-size: 14px; line-height: 1.4; min-width: 220px; }
+.leaflet-container a.leaflet-popup-close-button { color: var(--muted); }
+.pop h3 { font-family: var(--font-display); font-size: 17px; font-weight: 800; margin: 0 0 2px; }
+.pop .meta { color: var(--muted); font-size: 12px; margin: 0 0 8px; font-family: var(--font-data); }
+.pop p { margin: 6px 0 0; }
+.pop .evidence { font-size: 12px; color: var(--muted); border-left: 2px solid var(--rule); padding-left: 8px; }
+.pop .links { display: flex; gap: 14px; margin-top: 10px; font-weight: 600; font-size: 13px; }
+
+.st-label { pointer-events: none; }
+.st-label span {
+  position: absolute; left: 0; top: 0;
+  transform-origin: 0 0;
+  white-space: nowrap;
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  color: var(--muted);
+  text-shadow: 0 0 3px var(--asphalt), 0 0 3px var(--asphalt), 0 0 2px var(--asphalt);
+}
+.hood-label span {
+  position: absolute; transform: translate(-50%, -50%);
+  white-space: nowrap;
+  font-family: var(--font-display); font-size: 12px; font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--hood);
+  text-shadow: 0 0 4px var(--asphalt), 0 0 4px var(--asphalt);
+  pointer-events: none;
+}
+.map-z-low .lbl-minor, .map-z-low .lbl-major { display: none; }
+.map-z-mid .lbl-minor { display: none; }
+.map-z-high .hood-label { display: none; }
+.pin span {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--ink); color: var(--paper);
+  border: 2px solid var(--paper);
+  font-family: var(--font-data); font-size: 12px; font-weight: 600;
+  box-shadow: 0 2px 6px rgb(0 0 0 / .3);
+}
+.dest-pin span {
+  position: absolute; transform: translate(-50%, -100%);
+  background: var(--focus); color: var(--paper);
+  font-family: var(--font-display); font-weight: 800; font-size: 12px;
+  padding: 4px 9px; border-radius: 6px; white-space: nowrap;
+  box-shadow: 0 2px 8px rgb(0 0 0 / .3);
+}
+.dest-pin span::after {
+  content: ""; position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%);
+  border: 6px solid transparent; border-bottom: 0; border-top-color: var(--focus);
+}
+.locate {
+  position: absolute; z-index: 800;
+  left: calc(12px + env(safe-area-inset-left, 0px)); top: 12px;
+  border: 1px solid var(--rule); background: var(--card);
+  border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: 13px; cursor: pointer;
+  box-shadow: 0 2px 8px rgb(0 0 0 / .15);
+}
+
+@media (max-width: 760px) {
+  html, body { height: auto; }
+  .app { display: flex; flex-direction: column; height: auto; }
+  .mapwrap { order: -1; height: 62vh; height: 62svh; }
+  .panel {
+    border-right: 0; overflow: visible;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .locate { top: auto; bottom: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaflet-fade-anim .leaflet-popup, .leaflet-zoom-anim .leaflet-zoom-animated { transition: none !important; }
+}
+</style>
+
+<div class="app">
+  <aside class="panel" aria-label="Parking controls">
+    <header class="brand">
+      <div class="sign" aria-hidden="true"><b>P</b><small>FREE</small></div>
+      <div>
+        <h1>Free Curb ATL</h1>
+        <p class="sub">Free street parking around Midtown, Georgia Tech, Home Park and the Westside</p>
+      </div>
+    </header>
+
+    <section class="when" aria-labelledby="when-label">
+      <div class="when-head">
+        <span class="eyebrow" id="when-label">Parking on</span>
+        <button class="btn" id="nowBtn" type="button" aria-pressed="true">Now</button>
+      </div>
+      <div class="when-inputs">
+        <input type="date" id="dateIn" aria-label="Date">
+        <input type="time" id="timeIn" aria-label="Time" step="900">
+      </div>
+      <p class="meter-state" id="meterState"><span class="meter-dot"></span><span id="meterText"></span></p>
+      <p class="summary" id="summary"></p>
+    </section>
+
+    <section class="legend" aria-labelledby="legend-label">
+      <div class="legend-head">
+        <span class="eyebrow" id="legend-label">Curb types</span>
+        <span class="eyebrow">km of street</span>
+      </div>
+      <div id="legend"></div>
+    </section>
+
+    <section class="dest" aria-labelledby="dest-label">
+      <h2 id="dest-label">Where are you headed?</h2>
+      <div class="chips" id="chips"></div>
+      <p class="hint">Or tap anywhere on the map to drop a pin.</p>
+      <label class="opt"><input type="checkbox" id="incCheck"> Include “check the signs” blocks</label>
+      <ol class="results" id="results" aria-live="polite"></ol>
+    </section>
+
+    <footer class="fine">
+      <p><strong>How it works.</strong> The map starts from every City of Atlanta street block in the area. It removes blocks with a confirmed meter, the Midtown and Downtown meter districts, the Georgia Tech campus and Atlantic Station. Next it marks permit streets as time-limited, then removes highways, ramps, park drives and major roads, where curb parking isn’t allowed. Whatever is left is green.</p>
+      <p>The city publishes no meter inventory. Block rules come from individually checked on-street listings, the <a href="https://homepark.org/about/residential-permit-parking-program/" target="_blank" rel="noopener">Home Park</a> and <a href="https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf" target="_blank" rel="noopener">Ansley Park</a> permit programs, <a href="https://midtownatlanta.org/enforcement-new-residential-permit-parking-programs-will-begin-may-16/" target="_blank" rel="noopener">Midtown’s permit streets</a>, <a href="https://www.atlplusmobility.com/parking-zones" target="_blank" rel="noopener">ATLPlus</a> hours and <a href="https://pts.gatech.edu/parking-maps-zones" target="_blank" rel="noopener">GT Parking</a>. Each block’s popup says whether its rule was confirmed or inferred. Green means no rule on record, not a guarantee. Rush-hour tow zones, street sweeping and game-day restrictions near Bobby Dodd still apply. Posted signs always win.</p>
+      <p id="compiled"></p>
+    </footer>
+  </aside>
+
+  <main class="mapwrap">
+    <div id="map" role="application" aria-label="Map of street parking by curb type"></div>
+    <button class="locate" id="locateBtn" type="button" hidden>Near me</button>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>/*__HOURS_JS__*/</script>
+<script>
+const DATA = /*__DATA__*/null;
+
+(() => {
+  "use strict";
+
+  // ------------------------------------------------------------ constants
+  const WALK_M_PER_MIN = 80;
+  const DETOUR = 1.3; // straight line -> walking distance
+  const CATS = [
+    { key: "free",    label: "Likely free",          note: "No meter, permit rule or ban on record" },
+    { key: "limited", label: "Free, time-limited",   note: "Permit streets: visitors get the posted limit, usually 2 hr" },
+    { key: "freenow", label: "Free right now",       note: "Paid or restricted by day, free at this hour" },
+    { key: "check",   label: "Check the signs",      note: "Busy roads, unconfirmed blocks, daytime bans" },
+    { key: "paid",    label: "Paid",                 note: "" },
+    { key: "campus",  label: "Georgia Tech",         note: "Permit or paid visitor parking" },
+    { key: "none",    label: "No parking",           note: "Highways, ramps, major roads" },
+  ];
+  const PILL = { free: "Likely free", limited: "Free · time limit", freenow: "Free now", check: "Check signs", paid: "Paid", campus: "GT campus", none: "No parking" };
+  const PLACES = [
+    { name: "Tech Square", at: [33.7770, -84.3891] },
+    { name: "Bobby Dodd Stadium", at: [33.7725, -84.3929] },
+    { name: "McCamish Pavilion", at: [33.7808, -84.3929] },
+    { name: "Student Center", at: [33.7740, -84.3988] },
+    { name: "Fox Theatre", at: [33.7726, -84.3856] },
+    { name: "High Museum", at: [33.7900, -84.3855] },
+    { name: "Piedmont Park", at: [33.7851, -84.3738] },
+    { name: "Atlantic Station", at: [33.7925, -84.3960] },
+    { name: "Westside Provisions", at: [33.7866, -84.4118] },
+  ];
+
+  // ------------------------------------------------------------ geometry helpers
+  const M_LAT = 111320, M_LON = 111320 * Math.cos(33.78 * Math.PI / 180);
+  function segDist(p, a, b) { // p,a,b = [lat,lng]; returns [meters, nearest point]
+    const ax = a[1] * M_LON, ay = a[0] * M_LAT, bx = b[1] * M_LON, by = b[0] * M_LAT;
+    const px = p[1] * M_LON, py = p[0] * M_LAT;
+    const dx = bx - ax, dy = by - ay;
+    const t = dx || dy ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy))) : 0;
+    const nx = ax + t * dx, ny = ay + t * dy;
+    return [Math.hypot(px - nx, py - ny), [ny / M_LAT, nx / M_LON]];
+  }
+  function lineDist(p, ll) {
+    let best = [Infinity, ll[0]];
+    for (let i = 0; i < ll.length - 1; i++) {
+      const r = segDist(p, ll[i], ll[i + 1]);
+      if (r[0] < best[0]) best = r;
+    }
+    return best;
+  }
+  function mid(ll) {
+    let total = 0;
+    const d = [];
+    for (let i = 0; i < ll.length - 1; i++) {
+      const s = Math.hypot((ll[i + 1][1] - ll[i][1]) * M_LON, (ll[i + 1][0] - ll[i][0]) * M_LAT);
+      d.push(s); total += s;
+    }
+    let run = 0;
+    for (let i = 0; i < d.length; i++) {
+      if (run + d[i] >= total / 2 && d[i] > 0) {
+        const t = (total / 2 - run) / d[i];
+        return { at: [ll[i][0] + t * (ll[i + 1][0] - ll[i][0]), ll[i][1] + t * (ll[i + 1][1] - ll[i][1])], i };
+      }
+      run += d[i];
+    }
+    return { at: ll[0], i: 0 };
+  }
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  // ------------------------------------------------------------ Atlanta meter hours (web/hours.js)
+  const { atlNow, meterState, effectiveStatus } = Hours;
+
+  // ------------------------------------------------------------ state
+  const state = {
+    live: true,
+    when: atlNow(),
+    meters: null,
+    hidden: new Set(),
+    dest: null,
+    includeCheck: false,
+    selected: null,
+  };
+  state.meters = meterState(state.when);
+
+  const segs = DATA.streets.features.map(f => {
+    const ll = f.geometry.coordinates.map(([x, y]) => [y, x]);
+    return { p: f.properties, ll, m: mid(ll) };
+  });
+  function effective(s) { return effectiveStatus(s.p, state.when); }
+
+  // ------------------------------------------------------------ map
+  const map = L.map("map", { preferCanvas: true, zoomControl: false, minZoom: 13, maxZoom: 19, zoomSnap: 0.5 });
+  L.control.zoom({ position: "topright" }).addTo(map);
+  map.attributionControl.setPrefix(false);
+  map.attributionControl.addAttribution('Streets: City of Atlanta GIS · Parks: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors');
+  const renderer = L.canvas({ padding: 0.4, tolerance: 7 });
+  map.createPane("labels").style.zIndex = 450;
+  map.getPane("labels").style.pointerEvents = "none";
+  map.createPane("pins").style.zIndex = 620;
+
+  const focusBounds = L.latLngBounds([33.7665, -84.4135], [33.7985, -84.3705]);
+  map.fitBounds(focusBounds, { padding: [10, 10] });
+  map.setMaxBounds(focusBounds.pad(0.6));
+  // The container can get its final size after this script runs (fonts, host frame).
+  let fitted = false;
+  new ResizeObserver(() => {
+    map.invalidateSize();
+    if (!fitted && map.getSize().x > 0) { fitted = true; map.fitBounds(focusBounds, { padding: [10, 10] }); }
+  }).observe(map.getContainer());
+
+  const parkLayer = L.geoJSON(DATA.parks, { interactive: false, renderer });
+  const hoodLayer = L.geoJSON(DATA.hoods, { interactive: false, renderer });
+  parkLayer.addTo(map);
+  hoodLayer.addTo(map);
+
+  const halo = L.polyline([], { renderer, interactive: false, lineCap: "round" }).addTo(map);
+  for (const s of segs) {
+    s.line = L.polyline(s.ll, { renderer, lineCap: "round", lineJoin: "round" });
+    s.line.on("click", () => select(s, true));
+    s.line.addTo(map);
+  }
+
+  function weight(z, strong) {
+    const w = z <= 13.5 ? 1.6 : z <= 14.5 ? 2.4 : z <= 15.5 ? 3.6 : z <= 16.5 ? 5 : z <= 17.5 ? 7 : 9;
+    return strong ? w : Math.max(1.2, w * 0.45);
+  }
+  const color = k => css(k === "freenow" ? "--c-free" : `--c-${k}`);
+
+  function restyle() {
+    const z = map.getZoom();
+    const colors = Object.fromEntries(CATS.map(c => [c.key, color(c.key)]));
+    const street = css("--street");
+    for (const s of segs) {
+      const k = effective(s);
+      const hidden = state.hidden.has(k);
+      const strong = k !== "none" && !hidden;
+      s.line.setStyle({
+        color: hidden ? street : colors[k],
+        weight: weight(z, strong),
+        opacity: hidden ? 0.55 : 1,
+        dashArray: k === "freenow" && !hidden ? `${Math.round(weight(z, true) * 1.6)} ${Math.round(weight(z, true) * 1.3)}` : null,
+      });
+      if (k === "none" || hidden) s.line.bringToBack();
+    }
+    parkLayer.setStyle({ stroke: false, fillColor: css("--park"), fillOpacity: 1 });
+    hoodLayer.setStyle(f => ({
+      fill: false, color: css("--hood"), weight: f.properties.focus ? 1.4 : 0.8,
+      opacity: f.properties.focus ? 0.7 : 0.35, dashArray: "4 5",
+    }));
+    parkLayer.bringToBack();
+    if (state.selected) {
+      halo.setLatLngs(state.selected.ll).setStyle({ color: css("--halo"), weight: weight(z, true) + 6, opacity: 0.9 });
+      halo.bringToFront();
+      state.selected.line.bringToFront();
+    } else {
+      halo.setLatLngs([]);
+    }
+  }
+
+  // street + neighborhood labels
+  (function buildLabels() {
+    const byName = new Map();
+    for (const s of segs) {
+      if (!byName.has(s.p.name)) byName.set(s.p.name, []);
+      byName.get(s.p.name).push(s);
+    }
+    for (const [name, list] of byName) {
+      const total = list.reduce((a, s) => a + s.p.len, 0);
+      if (total < 160 || /Conn|Interstate|Hwy|75 NW/.test(name)) continue;
+      const major = total > 1400;
+      const chosen = [];
+      for (const s of [...list].sort((a, b) => b.p.len - a.p.len)) {
+        if (s.p.len < 70 || chosen.length >= (major ? 4 : 2)) continue;
+        if (chosen.some(c => Math.hypot((c[1] - s.m.at[1]) * M_LON, (c[0] - s.m.at[0]) * M_LAT) < 650)) continue;
+        chosen.push(s.m.at);
+        const a = s.ll[s.m.i], b = s.ll[s.m.i + 1] || s.ll[s.m.i];
+        let ang = -Math.atan2((b[0] - a[0]) * M_LAT, (b[1] - a[1]) * M_LON) * 180 / Math.PI;
+        if (ang > 90) ang -= 180;
+        if (ang < -90) ang += 180;
+        const label = name.replace(/\s(NW|NE|SW|SE)$/, "");
+        L.marker(s.m.at, {
+          pane: "labels", interactive: false, keyboard: false,
+          icon: L.divIcon({
+            className: `st-label ${major ? "lbl-major" : "lbl-minor"}`, iconSize: [0, 0],
+            html: `<span style="transform: rotate(${ang.toFixed(1)}deg) translate(-50%, -135%)">${esc(label)}</span>`,
+          }),
+        }).addTo(map);
+      }
+    }
+    for (const f of DATA.hoods.features) {
+      if (!f.properties.focus || !f.properties.label) continue;
+      L.marker(f.properties.label, {
+        pane: "labels", interactive: false, keyboard: false,
+        icon: L.divIcon({ className: "hood-label", iconSize: [0, 0], html: `<span>${esc(f.properties.name)}</span>` }),
+      }).addTo(map);
+    }
+  })();
+
+  function zoomClass() {
+    const z = map.getZoom();
+    const el = map.getContainer();
+    el.classList.toggle("map-z-low", z < 15);
+    el.classList.toggle("map-z-mid", z >= 15 && z < 16.5);
+    el.classList.toggle("map-z-high", z >= 16.5);
+  }
+  map.on("zoomend", () => { zoomClass(); restyle(); });
+
+  // ------------------------------------------------------------ popups / selection
+  function popupHtml(s) {
+    const k = effective(s);
+    const p = s.p;
+    const end = p.until === 19 ? "7 PM" : "10 PM";
+    let rule = "";
+    if (p.timed) rule = `City meter hours: Mon–Sat 7 AM–${end}. Free on Sundays and city holidays.`;
+    else if (p.status === "night") rule = "Free from 7 PM to 7 AM; restricted during the day.";
+    let lead = `${p.reason}.`;
+    if (k === "freenow" && p.status === "paid") lead = `Meters are off at this time. ${p.reason}.`;
+    if (k === "freenow" && p.status === "night") lead = "Open now: this block is only restricted during the day.";
+    let evidence = "";
+    if (p.conf === "listing") evidence = `Confirmed by a block listing${p.detail ? ": " + p.detail : ""}.`;
+    else if (p.conf === "district") evidence = "Inferred from the meter district. This block isn’t individually confirmed.";
+    else if (p.detail) evidence = `${p.detail}.`;
+    const nav = `https://www.google.com/maps/dir/?api=1&destination=${s.m.at[0].toFixed(5)},${s.m.at[1].toFixed(5)}`;
+    const src = p.source ? `<a href="${esc(p.source)}" target="_blank" rel="noopener">Source</a>` : "";
+    return `<div class="pop">
+      <h3>${esc(p.name)}</h3>
+      <p class="meta">${p.block ? esc(p.block) + " block" : "Unnumbered block"}${p.hood ? " · " + esc(p.hood) : ""}</p>
+      <span class="pill" style="background:${color(k)}">${PILL[k]}</span>
+      <p>${esc(lead)}</p>${rule ? `<p>${esc(rule)}</p>` : ""}
+      ${evidence ? `<p class="evidence">${esc(evidence)}</p>` : ""}
+      <div class="links"><a href="${nav}" target="_blank" rel="noopener">Directions</a>${src}</div>
+    </div>`;
+  }
+  const popup = L.popup({ autoPanPadding: [30, 30], maxWidth: 300 });
+  function select(s, openPopup, at) {
+    state.selected = s;
+    restyle();
+    if (openPopup) popup.setLatLng(at || s.m.at).setContent(popupHtml(s)).openOn(map);
+  }
+  map.on("popupclose", () => { state.selected = null; restyle(); });
+
+  // ------------------------------------------------------------ destination + nearest free blocks
+  const pinLayer = L.layerGroup().addTo(map);
+  function setDest(at, name) {
+    state.dest = { at, name };
+    for (const b of document.querySelectorAll(".chip")) b.setAttribute("aria-pressed", String(b.dataset.name === name));
+    renderResults();
+  }
+  map.on("click", e => {
+    map.closePopup();
+    setDest([e.latlng.lat, e.latlng.lng], "Dropped pin");
+  });
+
+  function renderResults() {
+    pinLayer.clearLayers();
+    const ol = document.getElementById("results");
+    ol.textContent = "";
+    if (!state.dest) return;
+    L.marker(state.dest.at, {
+      pane: "pins", interactive: false, keyboard: false,
+      icon: L.divIcon({ className: "dest-pin", iconSize: [0, 0], html: `<span>${esc(state.dest.name)}</span>` }),
+    }).addTo(pinLayer);
+
+    const ok = new Set(["free", "freenow", "limited"]);
+    if (state.includeCheck) ok.add("check");
+    const best = new Map(); // one block per street name
+    for (const s of segs) {
+      const k = effective(s);
+      if (!ok.has(k) || s.p.len < 40) continue;
+      const [d, near] = lineDist(state.dest.at, s.ll);
+      const cur = best.get(s.p.name);
+      if (!cur || d < cur.d) best.set(s.p.name, { s, d, near, k });
+    }
+    const top = [...best.values()].sort((a, b) => a.d - b.d).slice(0, 6);
+    if (!top.length) {
+      const li = document.createElement("li");
+      li.innerHTML = `<p class="empty">No open curb nearby with the current filters.</p>`;
+      ol.append(li);
+      return;
+    }
+    top.forEach((r, i) => {
+      const mins = Math.max(1, Math.round((r.d * DETOUR) / WALK_M_PER_MIN));
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "res";
+      btn.innerHTML = `<span class="num">${i + 1}</span>
+        <span class="res-name">${esc(r.s.p.name)}<small>${r.s.p.block ? esc(r.s.p.block) + " · " : ""}${esc(r.s.p.hood || "")} · ${PILL[r.k]}</small></span>
+        <span class="res-walk">${mins} min<small>${Math.round(r.d * DETOUR)} m walk</small></span>`;
+      btn.addEventListener("click", () => {
+        map.flyToBounds(L.latLngBounds([state.dest.at, r.near]).pad(0.6), { maxZoom: 18, duration: 0.6 });
+        select(r.s, true, r.near);
+      });
+      li.append(btn);
+      ol.append(li);
+      L.marker(r.near, {
+        pane: "pins", keyboard: false,
+        icon: L.divIcon({ className: "pin", iconSize: [0, 0], html: `<span>${i + 1}</span>` }),
+      }).on("click", () => select(r.s, true, r.near)).addTo(pinLayer);
+    });
+  }
+
+  // ------------------------------------------------------------ panel: legend, chips, time
+  function renderLegend() {
+    const km = Object.fromEntries(CATS.map(c => [c.key, 0]));
+    let confirmedPaid = 0;
+    for (const s of segs) {
+      const k = effective(s);
+      km[k] += s.p.len / 1000;
+      if (k === "paid" && s.p.conf === "listing") confirmedPaid += s.p.len / 1000;
+    }
+    CATS.find(c => c.key === "paid").note =
+      `Meter districts and Atlantic Station; ${confirmedPaid.toFixed(1)} km confirmed block by block`;
+    const box = document.getElementById("legend");
+    box.textContent = "";
+    for (const c of CATS) {
+      if (c.key === "freenow" && km.freenow === 0) continue;
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "leg";
+      b.setAttribute("aria-pressed", String(!state.hidden.has(c.key)));
+      b.innerHTML = `<span class="curb${c.key === "freenow" ? " dashed" : ""}" style="background:${color(c.key)}"></span>
+        <span class="leg-label">${c.label}<small>${c.note}</small></span>
+        <span class="leg-km">${km[c.key].toFixed(1)}</span>`;
+      b.addEventListener("click", () => {
+        state.hidden.has(c.key) ? state.hidden.delete(c.key) : state.hidden.add(c.key);
+        renderLegend();
+        restyle();
+      });
+      box.append(b);
+    }
+    const free = km.free + km.freenow + km.limited;
+    const extra = km.freenow > 0 ? `, and ${km.freenow.toFixed(1)} km that is paid or restricted by day but open now` : "";
+    document.getElementById("summary").innerHTML =
+      `<strong>${free.toFixed(1)} km</strong> of curb is free at this time: ${km.free.toFixed(1)} km with no rule on record, ${km.limited.toFixed(1)} km with a time limit${extra}.`;
+  }
+
+  function renderWhen() {
+    const w = state.when;
+    const pad = n => String(n).padStart(2, "0");
+    document.getElementById("dateIn").value = `${w.y}-${pad(w.m)}-${pad(w.d)}`;
+    document.getElementById("timeIn").value = `${pad(w.h)}:${pad(w.mi)}`;
+    document.getElementById("nowBtn").setAttribute("aria-pressed", String(state.live));
+    const el = document.getElementById("meterState");
+    el.classList.toggle("off", state.meters.off);
+    document.getElementById("meterText").textContent = state.meters.text;
+  }
+
+  function setWhen(w, live) {
+    state.when = w;
+    state.live = live;
+    state.meters = meterState(w);
+    renderWhen();
+    renderLegend();
+    restyle();
+    renderResults();
+    if (state.selected && map.isPopupOpen()) popup.setContent(popupHtml(state.selected));
+  }
+
+  function readInputs() {
+    const [y, m, d] = (document.getElementById("dateIn").value || "").split("-").map(Number);
+    const [h, mi] = (document.getElementById("timeIn").value || "").split(":").map(Number);
+    if (!y || !m || !d || Number.isNaN(h) || Number.isNaN(mi)) return;
+    setWhen({ y, m, d, h, mi }, false);
+  }
+  document.getElementById("dateIn").addEventListener("change", readInputs);
+  document.getElementById("timeIn").addEventListener("change", readInputs);
+  document.getElementById("nowBtn").addEventListener("click", () => setWhen(atlNow(), true));
+  setInterval(() => { if (state.live) setWhen(atlNow(), true); }, 60_000);
+
+  document.getElementById("incCheck").addEventListener("change", e => {
+    state.includeCheck = e.target.checked;
+    renderResults();
+  });
+
+  const chips = document.getElementById("chips");
+  for (const p of PLACES) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.dataset.name = p.name;
+    b.textContent = p.name;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => {
+      map.closePopup();
+      setDest(p.at, p.name);
+      map.flyTo(p.at, Math.max(map.getZoom(), 16), { duration: 0.6 });
+    });
+    chips.append(b);
+  }
+
+  // "Near me" only where the browser will actually hand over a location (self-hosted copies).
+  (async () => {
+    const btn = document.getElementById("locateBtn");
+    if (!navigator.geolocation || !navigator.permissions) return;
+    try {
+      const st = await navigator.permissions.query({ name: "geolocation" });
+      if (st.state === "denied") return;
+    } catch { return; }
+    btn.hidden = false;
+    btn.addEventListener("click", () => {
+      btn.textContent = "Locating…";
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          btn.textContent = "Near me";
+          const at = [pos.coords.latitude, pos.coords.longitude];
+          setDest(at, "You");
+          map.flyTo(at, 17, { duration: 0.6 });
+        },
+        () => { btn.textContent = "Location unavailable"; setTimeout(() => (btn.textContent = "Near me"), 2500); },
+        { enableHighAccuracy: true, timeout: 10000 },
+      );
+    });
+  })();
+
+  // theme changes repaint the canvas from the new tokens
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { restyle(); renderLegend(); });
+  new MutationObserver(() => { restyle(); renderLegend(); renderResults(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  document.getElementById("compiled").textContent =
+    `Paid-parking list compiled ${DATA.compiled}. ${segs.length.toLocaleString()} street blocks classified.`;
+
+  // open in a working state: Tech Square, nearest free curb listed
+  zoomClass();
+  renderWhen();
+  renderLegend();
+  restyle();
+  setDest(PLACES[0].at, PLACES[0].name);
+})();
+</script>
