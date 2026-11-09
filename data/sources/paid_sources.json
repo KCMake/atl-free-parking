@@ -1,0 +1,182 @@
+{
+  "_about": "Everything that makes a curb NOT plainly free, compiled by hand because the City of Atlanta publishes no meter dataset. build.py inverts this against the city's street centerlines. Edit this file to correct the map, then re-run build.py.",
+  "compiled": "2026-11-08",
+
+  "enforcement": {
+    "source": "https://www.atlplusmobility.com/parking-zones",
+    "meters": {
+      "days": "Mon-Sat",
+      "start": "07:00",
+      "end": "22:00",
+      "note": "Business, school/university and entertainment zones run 7 AM-10 PM; mixed-use zones end at 6 PM. Blocks without a listing assume the longer window."
+    },
+    "holidays": ["New Year's Day", "Martin Luther King Jr. Day", "Memorial Day", "Independence Day", "Labor Day", "Veterans Day", "Thanksgiving Day", "Day after Thanksgiving", "Christmas Day"],
+    "sunday_free": true
+  },
+
+  "listings": {
+    "_about": "Block-level on-street listings, each checked for its actual rule (Parkopedia files every on-street listing under /meter/, including free and time-limited ones). rule: meter = paid, city hours unless 'until' says otherwise | free_limit = free up to a posted limit | night = no parking or permit-only 7 AM-7 PM, free 7 PM-7 AM | free = free all day | check = restriction that doesn't fit the map's categories | unknown = listing exists, rule not confirmed. Checked 2026-11-08.",
+    "source": "https://en.parkopedia.com/parking/atlanta/",
+    "items": [
+      {"addr": "922 West Peachtree St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/922_west_peachtree_street_northwest-1/30309/atlanta/"},
+      {"addr": "950 West Peachtree St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/950_w_peachtree_st_nw/30309/atlanta/"},
+      {"addr": "84 Peachtree Pl NE", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/84_peachtree_place_ne/30309/atlanta/"},
+      {"addr": "90 Peachtree Pl NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/90_peachtree_place_nw/30309/atlanta/"},
+      {"addr": "67 Peachtree Pl NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/67_peachtree_place_northwest/30309/atlanta/"},
+      {"addr": "44 Peachtree Pl NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/44_peachtree_place_northwest/30309/atlanta/"},
+      {"addr": "100 6th St NE", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/100_6th_st_ne/30308/atlanta/"},
+      {"addr": "80 7th St NE", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/80_7th_street_ne/30308/atlanta/"},
+      {"addr": "100 12th St NE", "rule": "meter", "detail": "$2.00/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/100_12th_street_ne/30309/atlanta"},
+      {"addr": "87 12th St NE", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/87_12th_street_northeast-1/30309/atlanta/"},
+      {"addr": "27 12th St NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/27_12th_street_northwest/30309/atlanta/"},
+      {"addr": "110 11th St NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/110_11th_street_northwest/30318/atlanta/"},
+      {"addr": "1355 Peachtree St NE", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/1355_peachtree_street_ne/30309/atlanta/"},
+      {"addr": "224 Ponce De Leon Ave NE", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/224_ponce_de_leon_avenue_ne/30308/atlanta/"},
+      {"addr": "59 3rd St NW", "rule": "meter", "until": 19, "detail": "$3.50/hr, Mon–Sat 7 AM–7 PM, 2-hr max", "url": "https://en.parkopedia.com/parking/meter/59_3rd_street_nw/30308/atlanta/"},
+
+      {"addr": "831 3rd St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/831_3rd_street_northwest/30318/atlanta/"},
+      {"addr": "860 3rd St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/860_3rd_street_northwest/30318/atlanta/"},
+      {"addr": "878 3rd St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/878_3rd_street_northwest/30318/atlanta/"},
+      {"addr": "950 Marietta St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/950_marietta_street_northwest/30318/atlanta"},
+      {"addr": "962 Marietta St NW", "rule": "meter", "detail": "Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/962_marietta_street_northwest/30318/atlanta"},
+      {"addr": "935 Marietta St NW", "rule": "check", "detail": "Free, but a loading zone weekdays 9 AM–5 PM", "url": "https://en.parkopedia.com/parking/meter/935_marietta_street_northwest/30318/atlanta/"},
+      {"addr": "701 8th St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/701_8th_street_northwest/30318/atlanta/"},
+      {"addr": "711 10th St NW", "rule": "meter", "detail": "Listed meter, free outside metered hours", "url": "https://en.parkopedia.com/parking/meter/711_10th_street_northwest/30318/atlanta/"},
+      {"addr": "776 11th St NW", "rule": "unknown", "detail": "On-street listing; rule not confirmed", "url": "https://en.parkopedia.com/parking/meter/776_11th_street_northwest/30318/atlanta/"},
+      {"addr": "926 Fielder Ave NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/926_fielder_avenue_northwest/30318/atlanta"},
+      {"addr": "943 Fielder Ave NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/943_fielder_avenue_northwest/30318/atlanta"},
+      {"addr": "952 Watkins St NW", "rule": "meter", "detail": "$3.50/hr, Mon–Sat 7 AM–10 PM, 4-hr max", "url": "https://en.parkopedia.com/parking/meter/952_watkins_street_northwest/30318/atlanta"},
+      {"addr": "430 Ethel St NW", "rule": "unknown", "detail": "On-street listing; rule not confirmed", "url": "https://en.parkopedia.com/parking/meter/430_ethel_street_northwest/30318/atlanta"},
+      {"addr": "497 Ethel St NW", "rule": "unknown", "detail": "On-street listing; rule not confirmed", "url": "https://en.parkopedia.com/parking/meter/497_ethel_street_northwest/30318/atlanta"},
+      {"addr": "721 Edgehill Ave NW", "rule": "unknown", "detail": "On-street listing; rule not confirmed", "url": "https://en.parkopedia.com/parking/meter/721_edgehill_avenue_northwest/30318/atlanta"},
+      {"addr": "347 11th St NW", "rule": "night", "detail": "No parking 7 AM–7 PM; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/347_11th_street_northwest/30318/atlanta/"},
+      {"addr": "388 Richards St NW", "rule": "night", "detail": "Permit-only by day; free overnight", "url": "https://en.parkopedia.com/parking/meter/388_richards_street_northwest/30318/atlanta/"},
+
+      {"addr": "1033 Hemphill Ave NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/1033_hemphill_avenue_northwest/30318/atlanta/"},
+      {"addr": "1045 Hemphill Ave NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/1045_hemphill_avenue_northwest/30318/atlanta"},
+      {"addr": "1063 Hemphill Ave NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/1063_hemphill_avenue_northwest/30318/atlanta/"},
+      {"addr": "1052 Hirsch St NW", "rule": "free", "detail": "Free all day", "url": "https://en.parkopedia.com/parking/meter/1052_hirsch_street_northwest-3/30318/atlanta"},
+      {"addr": "996 Hirsch St NW", "rule": "night", "detail": "No parking (permit) 7 AM–7 PM; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/996_hirsch_street_northwest/30318/atlanta/"},
+      {"addr": "1021 Hirsch St NW", "rule": "night", "detail": "No parking 7 AM–7 PM; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1021_hirsch_street_northwest/30318/atlanta"},
+      {"addr": "1054 Mcmillan St NW", "rule": "free", "detail": "Free all day", "url": "https://en.parkopedia.com/parking/meter/1054_mcmillan_street_northwest/30318/atlanta/"},
+      {"addr": "1102 Mcmillan St NW", "rule": "free_limit", "detail": "Free, 2-hr limit Mon–Sat 7 AM–7 PM", "url": "https://en.parkopedia.com/parking/meter/1102_mcmillan_street_northwest/30318/atlanta"},
+      {"addr": "990 State St NW", "rule": "night", "detail": "Restricted by day; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/990_state_street_northwest/30318/atlanta/"},
+      {"addr": "1103 State St NW", "rule": "night", "detail": "Restricted by day; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1103_state_street_northwest/30318/atlanta/"},
+      {"addr": "1110 State St NW", "rule": "night", "detail": "Permit-only by day; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1110_state_street_northwest/30318/atlanta/"},
+      {"addr": "1130 State St NW", "rule": "night", "detail": "Restricted by day; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1130_state_street_northwest-1/30318/atlanta/"},
+      {"addr": "998 Center St NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/998_northwest_center_street/30318/atlanta"},
+      {"addr": "1055 Center St NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/1055_northwest_center_street/30318/atlanta"},
+      {"addr": "1105 Center St NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/1105_northwest_center_street/30318/atlanta/"},
+      {"addr": "1131 Center St NW", "rule": "free_limit", "detail": "Free, 2-hr limit", "url": "https://en.parkopedia.com/parking/meter/1131_northwest_center_street/30318/atlanta"},
+      {"addr": "1025 Atlantic Dr NW", "rule": "night", "detail": "Restricted by day; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1025_atlantic_drive_northwest-1/30318/atlanta/"},
+      {"addr": "1087 Atlantic Dr NW", "rule": "night", "detail": "Restricted by day; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1087_atlantic_drive_northwest-1/30318/atlanta/"},
+      {"addr": "1128 Atlantic Dr NW", "rule": "night", "detail": "No parking 7 AM–7 PM; free 7 PM–7 AM", "url": "https://en.parkopedia.com/parking/meter/1128_atlantic_drive_northwest-1/30318/atlanta/"},
+      {"addr": "1132 Atlantic Dr NW", "rule": "free_limit", "detail": "Free, 2-hr limit 9 AM–6 PM", "url": "https://en.parkopedia.com/parking/meter/1132_atlantic_drive_northwest-1/30318/atlanta/"},
+
+      {"addr": "1374 Atlantic Dr NW", "rule": "meter", "detail": "$3.50–$4.00 first hour; no parking 1:30–3 AM", "url": "https://en.parkopedia.com/parking/meter/1374_atlantic_drive_northwest/30363/atlanta/"},
+      {"addr": "1380 Atlantic Dr NW", "rule": "meter", "detail": "$3.50 first hour; no parking 1:30–3 AM", "url": "https://en.parkopedia.com/parking/meter/1380_atlantic_drive_northwest/30363/atlanta/"},
+      {"addr": "230 18th St NW", "rule": "meter", "detail": "$3.50/hr; no parking 1:30–3 AM", "url": "https://en.parkopedia.com/parking/meter/230_18th_street_northwest/30363/atlanta/"},
+      {"addr": "260 18th St NW", "rule": "meter", "detail": "$3.50/hr; no parking 1:30–3 AM", "url": "https://en.parkopedia.com/parking/meter/260_18th_street_northwest/30363/atlanta/"},
+      {"addr": "387 18th St NW", "rule": "meter", "detail": "$5.50 for 2 hr, $10.50 all day", "url": "https://en.parkopedia.com/parking/meter/387_18th_street_northwest/30363/atlanta/"},
+      {"addr": "401 18th St NW", "rule": "meter", "detail": "$5.50 for 2 hr, $10.50 all day", "url": "https://en.parkopedia.com/parking/meter/401_18th_st_nw/30363/atlanta/"},
+      {"addr": "235 19th St NW", "rule": "meter", "detail": "$4.00/hr, tiered to $30.50 max", "url": "https://en.parkopedia.com/parking/meter/235_19th_street_northwest/30363/atlanta/"},
+      {"addr": "264 19th St NW", "rule": "meter", "detail": "$3.50/hr", "url": "https://en.parkopedia.com/parking/meter/264_19th_street_northwest/30363/atlanta/"},
+
+      {"addr": "112 Pine St NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/112_pine_st_nw/30313/atlanta"},
+      {"addr": "143 Pine St NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/143_pine_st_nw/30313/atlanta/"},
+      {"addr": "230 Mills St NW", "rule": "meter", "detail": "Listed meter", "url": "https://en.parkopedia.com/parking/meter/230_mills_street_northwest/30313/atlanta/"}
+    ]
+  },
+
+  "metered_corridors": {
+    "_about": "Streets assumed metered inside a district when no block listing says otherwise. Shown on the map as 'meter district' rather than a confirmed meter. Midtown applies only west of Piedmont Ave.",
+    "source": "https://www.atlplusmobility.com/",
+    "Midtown": {
+      "west_of_piedmont_only": true,
+      "streets": [
+        "Peachtree St NE", "Peachtree St NW", "West Peachtree St NW", "West Peachtree St NE", "West Peachtree St",
+        "West Peachtree Pl NW", "Spring St NW", "Juniper St NE", "Crescent Ave NE", "Peachtree Pl NE",
+        "Peachtree Pl NW", "Peachtree Walk NE", "Williams St NW", "Arts Center Way NE", "Cypress St NE",
+        "Ponce De Leon Ave NE", "Ponce De Leon Ave NW", "Midtown Pl NE",
+        "3rd St NE", "3rd St NW", "4th St NE", "4th St NW", "5th St NE", "5th St NW", "6th St NE", "6th St NW",
+        "7th St NE", "8th St NE", "8th St NW", "9th St NE", "9th St NW", "10th St NE", "10th St NW",
+        "11th St NE", "11th St NW", "12th St NE", "12th St NW", "13th St NE", "13th St NW",
+        "14th St NE", "14th St NW", "14th Pl NE", "15th St NE", "15th St NW", "16th St NE", "16th St NW",
+        "17th St NE", "17th St NW"
+      ]
+    },
+    "Downtown": {
+      "all_streets": true,
+      "note": "The slice of Downtown/SoNo inside the map (south of North Ave) is part of the ATLPlus core business district."
+    }
+  },
+
+  "districts": {
+    "_about": "Neighborhood-wide defaults, used when no block listing or street rule applies. kind: campus (never free) | private (always paid) | limited (city residential permit area where visitors may park up to the posted time limit) | permit (permit district with no street detail: check signs) | mapped (permit district with a published restriction map: only listed streets are restricted).",
+    "Georgia Tech": {
+      "kind": "campus",
+      "reason": "Georgia Tech campus: permit-only, or paid visitor parking through ParkMobile",
+      "source": "https://pts.gatech.edu/parking-maps-zones"
+    },
+    "Atlantic Station": {
+      "kind": "private",
+      "reason": "Atlantic Station: privately managed, paid street parking every day",
+      "source": "https://en.parkopedia.com/parking/meter/1380_atlantic_drive_northwest/30363/atlanta/"
+    },
+    "Home Park": {
+      "kind": "limited",
+      "reason": "Home Park permit area: visitors may park up to the posted time limit (usually 2 hours); a few blocks are permit-only by day",
+      "source": "https://homepark.org/about/residential-permit-parking-program/"
+    },
+    "Ansley Park": {
+      "kind": "mapped",
+      "reason": "Ansley Park: not on the neighborhood's 2023 map of restricted streets",
+      "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"
+    },
+    "Brookwood Hills": {
+      "kind": "permit",
+      "reason": "Brookwood Hills residential permit district",
+      "source": "https://www.atlantaga.gov/government/departments/transportation/strategy-and-planning/parking-services/residential-parking-permit"
+    },
+    "Virginia Highland": {
+      "kind": "permit",
+      "reason": "Virginia Highland residential permit district",
+      "source": "https://www.atlantaga.gov/government/departments/transportation/strategy-and-planning/parking-services/residential-parking-permit"
+    },
+    "Poncey-Highland": {
+      "kind": "permit",
+      "reason": "Poncey-Highland residential permit district",
+      "source": "https://www.atlantaga.gov/government/departments/transportation/strategy-and-planning/parking-services/residential-parking-permit"
+    },
+    "Vine City": {
+      "kind": "permit",
+      "reason": "Vine City residential permit district",
+      "source": "https://www.atlantaga.gov/government/departments/transportation/strategy-and-planning/parking-services/residential-parking-permit"
+    }
+  },
+
+  "street_rules": {
+    "_about": "Named streets with a known restriction. rule: limited (permit street: visitors get the posted time limit) | check (posted no-parking hours). Optional: east_of_piedmont, between [cross street A, cross street B].",
+    "items": [
+      {"street": "Myrtle St NE", "hood": "Midtown", "rule": "limited", "reason": "Midtown residential permit street: visitors limited to the posted time (usually 2 hours)", "source": "https://www.atlantaga.gov/government/departments/transportation/strategy-and-planning/parking-services/residential-parking-permit"},
+      {"street": "Penn Ave NE", "hood": "Midtown", "between": ["Ponce De Leon Ave NE", "5th St NE"], "rule": "limited", "reason": "Midtown residential permit block (Ponce to 5th): visitors limited to the posted time", "source": "https://midtownatlanta.org/enforcement-new-residential-permit-parking-programs-will-begin-may-16/"},
+      {"street": "8th St NE", "hood": "Midtown", "east_of_piedmont": true, "rule": "limited", "reason": "Midtown residential permit street: visitors limited to the posted time", "source": "https://midtownatlanta.org/enforcement-new-residential-permit-parking-programs-will-begin-may-16/"},
+      {"street": "4th St NE", "hood": "Midtown", "east_of_piedmont": true, "rule": "limited", "reason": "Midtown residential permit street: visitors limited to the posted time", "source": "https://midtownatlanta.org/enforcement-new-residential-permit-parking-programs-will-begin-may-16/"},
+      {"street": "9th St NE", "hood": "Midtown", "east_of_piedmont": true, "rule": "limited", "reason": "Permit street near Piedmont Park: 2 free hours for visitors (2011 report; check signs)", "source": "https://patch.com/georgia/midtown/city-considers-ending-free-parking-near-piedmont-park"},
+      {"street": "Charles Allen Dr NE", "hood": "Midtown", "rule": "limited", "reason": "Permit street by Piedmont Park: 2 free hours for visitors (2011 report; check signs)", "source": "https://patch.com/georgia/midtown/city-considers-ending-free-parking-near-piedmont-park"},
+
+      {"street": "15th St NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Walker Ter NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Peachtree Cir NE", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Westminster Dr NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Lafayette Dr NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "14th St NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Inman Cir NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "17th St NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "The Prado NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Park Ln NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "Avery Dr NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"},
+      {"street": "East Park Ln NE", "hood": "Ansley Park", "rule": "check", "reason": "Posted no-parking hours on this street (Ansley Park parking map, 2023)", "source": "https://ansleypark.org/resources/Documents/Ansley_Map_07122023%20(1).pdf"}
+    ]
+  }
+}
